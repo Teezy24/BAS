@@ -8,7 +8,7 @@ Lee and I are creating a .yaml file which basically should have all the function
 
 ## Question 2(gRPC)
 
-Marleny, Benjamin and Freddy are responsible for the gRPC part of the project. This is the server side of the project and becomes quite complicated. Once lee and I are  done with the .yaml file, we will start working on the gRPC part of the project with you guys.
+Marleny, Benjamin and Freddy are responsible for the gRPC part of the project. This is the server side of the project and becomes quite complicated. Once lee and I are  done with the .yaml file, we will start working on the gRPC part of the project with you guys. If anything needs to be changed let us know.
 
 ### I recommend that we start with the basic structure of the gRPC copying the code as it is, and then we can add more functionality to it and then modify it to our needs. When you feel like your changes are worth our attention just push the data so we can switch branches and see what to improve on.
 
