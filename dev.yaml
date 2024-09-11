@@ -8,39 +8,38 @@ servers:
   - url: http://localhost:9000/Programs
 
 paths:
-  /Faculty:
-    post:
-      summary: Create a new student
-      operationId: createStudent
-      description: Create a new student and add them to the collection of students
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Student'
-      responses:
-        '201':
-          description: Student created successfully
-          content:
-            application/json:
-              schema:
-                properties:
-                  studentid:
-                    type: integer
-                    description: the student number of the newly created student
-        default:
-          $ref: '#/components/schemas/ErrorMessage'
+  /faculties:
     get:
-      summary: Fetch all students
-      operationId: getAllStudents
-      description: Get a list of all the students
+      summary: Fetch all faculties
+      operationId: getFaculties
+      description: get list of faculties
+      #/requestBody:
+        #content:
+         #  schema:
+           #  $ref: '#/components/schemas/Student'
       responses:
         '200':
-          description: All students Retrieved
+          description: All faculties retrieved successfully
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref:  '#/components/schemas/Faculty'
+
+        default:
+          $ref: '#/components/schemas/ErrorMessage'
+    post:
+      summary: Add new Faculty
+      operationId: addFacutly
+      description: Add new Faculty
+      responses:
+        '200':
+          description: Faculty added successfully
           content:
             application/json:
               schema:
-                type: array
+                type: string
                 items:
                   $ref: '#/components/schemas/Student'
         default:

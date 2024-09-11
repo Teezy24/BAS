@@ -8,12 +8,12 @@ type Faculty readonly & record {|
     string department;
     string location;
     int contactinfo;
-    // Course[] courses;
+
 
 |};
 
 type Program readonly & record {|
-    string programid;
+    string programcode;
     string program_name;
     int nqf_level;
     string faculty;
@@ -32,8 +32,8 @@ table<Faculty> key(facultyid) facultys = table [
     {facultyid: "FOC", facultyName: "Faculty of Computing and Informatics", department: "Department of CyberSecurity", location: "House of Computing", contactinfo: 26481232235}
 ];
 
-table<Program> key(programid) programs = table [
-    {programid: "9364", program_name: "Engineering", nqf_level: 4, faculty: "Faculty of comuputing and informatics", department: "Department of computer science", reg_date: "2020-01-01"}
+table<Program> key(programcode) programs = table [
+    {programcode: "9364", program_name: "Engineering", nqf_level: 4, faculty: "Faculty of comuputing and informatics", department: "Department of computer science", reg_date: "2020-01-01"}
 ];
 
 table<Course> key(course_code) courses = table [
