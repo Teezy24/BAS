@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: BAS API
+  version: 2.0.0
+  description: Manage Programs
+
+servers:
+  - url: http://localhost:9000/Programs
+
+paths:
+  /Faculty:
+    post:
+      summary: Create a new student
+      operationId: createStudent
+      description: Create a new student and add them to the collection of students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Student created successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  studentid:
+                    type: integer
+                    description: the student number of the newly created student
+        default:
+          $ref: '#/components/schemas/ErrorMessage'
+    get:
+      summary: Fetch all students
+      operationId: getAllStudents
+      description: Get a list of all the students
+      responses:
+        '200':
+          description: All students Retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+
+
+  /students/{studentNumber}:
+    parameters:
+      - in: path
+        name: studentNumber
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Lookup a Single Student
+      operationId: lookupStudent
+      description: Find a single student by their student number
+      responses:
+        '200':
+          description: Student Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+    put:
+      summary: Update Student Details
+      operationId: updateStudentDetails
+      description: Update the details of a student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        default:
+          $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      summary: Delete a student
+      operationId: deleteStudent
+      description: Delete a student from the collection
+      responses:
+        '204':
+          description: Student deleted successfully
+        default:
+          $ref: '#/components/schemas/ErrorMessage'
+
+
+  /students/{studentNumber}/course/{courseCode}:
+    parameters:
+      - in: path
+        name: studentNumber
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: courseCode
+        required: true
+        schema:
+          type: string
+    put:
+      summary: Update a Student's Course Details
+      operationId: updateStudentCourseDetails
+      description: Update the course details of a student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Assessment'
+      responses:
+        '201':
+          description: Student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assessment'
+        default:
+          $ref: '#/components/schemas/ErrorMessage'
+
+
+components:
+  schemas:
+    Student:
+      type: object
+      required:
+        - studentNumber
+      properties:
+        studentNumber:
+          type: integer
+          description: the student number of the student
+          readOnly: true
+        firstname:
+          type: string
+          description: the first name of the student
+        lastname:
+          type: string
+          description: the last name of the student
+        emailaddress:
+          type: string
+          description: the email address of the student
+        
+    Course:
+      type: object
+      properties:
+        courseCode:
+          type: string
+          description: the course code of the course
+          readOnly: true
+        courseName:
+          type: string
+          description: the name of the course
+
+    StudentCourse:
+      type: object
+      properties:
+        studentNumber:
+          type: string
+          description: the identifier of the student
+        courseCode:
+          type: string
+          description: the identifier of the course
+      
+    Assessment:
+      type: object
+      properties:
+        assessmentCode:
+          type: string
+          description: one of the identifiers of the assessment
+          readOnly: true
+        assessmentName:
+          type: string
+          description: the name of the assessment
+        courseCode:
+          type: string
+          description: one of the identifiers of the course
+          readOnly: true
+        weight:
+          type: number
+          description: the weight of the assessment
+        student:
+          type: integer
+          description: the student's student number
+        mark:
+          type: number
+          description: the mark of the student
+          
+      
+    Error:
+      type: object
+      properties:
+        errorType:
+          type: string
+          enum:
+            - BadRequest
+
+            - Not Found
+
+            - InternelServerError
+        message:
+          type: string
+
+  responses:
+    ErrorMessage:
+      description: Exception handling of students and courses
+      content:
+        application/json:
+          schema:
+            $ref: '#/compenents/schemas/Error'
