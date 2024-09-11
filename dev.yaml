@@ -13,10 +13,6 @@ paths:
       summary: Fetch all faculties
       operationId: getFaculties
       description: get list of faculties
-      #/requestBody:
-        #content:
-         #  schema:
-           #  $ref: '#/components/schemas/Student'
       responses:
         '200':
           description: All faculties retrieved successfully
@@ -28,62 +24,72 @@ paths:
                   $ref:  '#/components/schemas/Faculty'
 
         default:
-          $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/ErrorMessage'
     post:
       summary: Add new Faculty
       operationId: addFacutly
       description: Add new Faculty
-      responses:
-        '200':
-          description: Faculty added successfully
-          content:
-            application/json:
-              schema:
-                type: string
-                items:
-                  $ref: '#/components/schemas/Student'
-        default:
-          $ref: '#/components/responses/ErrorMessage'
-
-
-  /students/{studentNumber}:
-    parameters:
-      - in: path
-        name: studentNumber
-        required: true
-        schema:
-          type: integer
-    get:
-      summary: Lookup a Single Student
-      operationId: lookupStudent
-      description: Find a single student by their student number
-      responses:
-        '200':
-          description: Student Retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Student'
-        default:
-          $ref: '#/components/responses/ErrorMessage'
-    put:
-      summary: Update Student Details
-      operationId: updateStudentDetails
-      description: Update the details of a student
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Student'
+              $ref: '#/components/schemas/Faculty'
       responses:
-        '200':
-          description: Student updated successfully
+        '201':
+          description: Faculty added successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Student'
+                properties:
+                  facultyid:
+                    type: string
+                    description: ID of the new Daculty
+    
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+
+
+  /programs:
+    get:
+      summary: Fetch all programs
+      operationId: getPrograms
+      description: Get a list of programs
+      responses:
+        '200':
+          description: All programs retrieved 
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Program'
+
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+    post:
+      summary: Add a new program
+      operationId: addProgram
+      description: Add program to the list of programs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Program'
+      responses:
+        '201':
+          description: Program added successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  programid:
+                    type: string
+                    description: ID of the new Program
+
         default:
           $ref: '#/components/schemas/ErrorMessage'
+
+# ignore the delete until its $ref so that we can then add that funtion later 
     delete:
       summary: Delete a student
       operationId: deleteStudent
@@ -94,38 +100,51 @@ paths:
         default:
           $ref: '#/components/schemas/ErrorMessage'
 
-
-  /students/{studentNumber}/course/{courseCode}:
-    parameters:
-      - in: path
-        name: studentNumber
-        required: true
-        schema:
-          type: integer
-      - in: path
-        name: courseCode
-        required: true
-        schema:
-          type: string
-    put:
-      summary: Update a Student's Course Details
-      operationId: updateStudentCourseDetails
-      description: Update the course details of a student
+  /courses:
+    get:
+      summary: Get all courses
+      operationId: getCourses
+      description: Get a list of courses
+      responses:
+        '200':
+          description: All courses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+    post:
+      summary: Add a new course
+      operationId: addCourse
+      description: Add a course to the list of courses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Assessment'
+              $ref: '#/components/schemas/Course'
       responses:
         '201':
-          description: Student updated successfully
+          description: Course added successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Assessment'
+                properties:
+                  course_code:
+                    type: string
+                    description: the code of the newly created course
         default:
-          $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/ErrorMessage'
 
+#THIS IS WHERE YOU START. THIS COMPONENTS SECTION IS SELF EXPLANITORY-
+#AFTER FINISHING WITH THE COMPONENTS PLEASE COPY AND PASTE THIS CODE
+
+#AND ADD THE BULLET POINTS THAT WE MUST DO THAT ARE IN QUESTION ONE- 
+#WITH ALL THOSE FUNCTIONS THEY SAID WE SHOULD DO AND THEN TELL ME WHAT-
+#WE SHOULD ADD THEN WHEN WE ARE FINISHED WE JOIN QUESTION 2.
+#DELETE COMMENTS FROM LINE 141-147 WHEN YOU ARE FINISHED
 
 components:
   schemas:
