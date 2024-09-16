@@ -148,6 +148,22 @@ paths:
 
 components:
   schemas:
+    Programme:
+      type: object
+      required:
+        - programmeCode
+      properties:
+        programmeCode:
+          type: string
+          description: the programme code of the programme
+          readOnly: true
+        programmeName:
+          type: string
+          description: the name of the programme
+        faculty:
+          type: string
+          description: the faculty of the programme
+
     Student:
       type: object
       required:
@@ -166,7 +182,7 @@ components:
         emailaddress:
           type: string
           description: the email address of the student
-        
+
     Course:
       type: object
       properties:
@@ -183,36 +199,11 @@ components:
       properties:
         studentNumber:
           type: string
-          description: the identifier of the student
+          description: the identifier of the student by student number
         courseCode:
           type: string
-          description: the identifier of the course
-      
-    Assessment:
-      type: object
-      properties:
-        assessmentCode:
-          type: string
-          description: one of the identifiers of the assessment
-          readOnly: true
-        assessmentName:
-          type: string
-          description: the name of the assessment
-        courseCode:
-          type: string
-          description: one of the identifiers of the course
-          readOnly: true
-        weight:
-          type: number
-          description: the weight of the assessment
-        student:
-          type: integer
-          description: the student's student number
-        mark:
-          type: number
-          description: the mark of the student
-          
-      
+          description: the identifier of the course by course code
+
     Error:
       type: object
       properties:
@@ -220,17 +211,138 @@ components:
           type: string
           enum:
             - BadRequest
-
             - Not Found
-
             - InternelServerError
         message:
           type: string
 
-  responses:
-    ErrorMessage:
-      description: Exception handling of students and courses
-      content:
-        application/json:
-          schema:
-            $ref: '#/compenents/schemas/Error'
+  paths:
+    /programmes:
+      post:
+        summary: Add a new programme
+        description: Add a new programme to the Programme
+        requestBody:
+          description: Programme details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        responses:
+          201:
+            description: Programme created successfully
+          400:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes:
+      get:
+        summary: Retrieve a list of all programmes
+        description: Retrieve a list of all programmes within the Programme Development Unit
+        responses:
+          200:
+            description: List of programmes
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      patch:
+        summary: Update an existing programme's information
+        description: Update an existing programme's information according to the programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        requestBody:
+          description: Programme details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        responses:
+          200:
+            description: Programme updated successfully
+          400:
+            $ref: '#/components/responses/ErrorMessage'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      get:
+        summary: Retrieve the details of a specific programme
+        description: Retrieve the details of a specific programme by their programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: Programme details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      delete:
+        summary: Delete a programme's record
+        description: Delete a programme's record by their programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        responses:
+          204:
+            description: Programme deleted successfully
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/review:
+      get:
+        summary: Retrieve all programmes due for review
+        description: Retrieve all programmes that are due for review
+        responses:
+          200:
+            description: List of programmes due for review
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/faculty/{faculty}:
+      get:
+        summary: Retrieve all programmes belonging to the same faculty
+        description: Retrieve all programmes that belong to the same faculty
+        parameters:
+          - in: path
+            name: faculty
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: List of programmes belonging to the same faculty
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
