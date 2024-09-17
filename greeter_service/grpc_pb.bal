@@ -1,2 +1,0 @@
-public const string GRPC_DESC = "0A0A677270632E70726F746F";
-
