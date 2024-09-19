@@ -624,7 +624,7 @@ public type Product record {|
     string description = "";
     float price = 0.0;
     int stock_quantity = 0;
-    string sku = "";
+    readonly string sku = "";
     Product_ProductStatus status = AVAILABLE;
 |};
 

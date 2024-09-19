@@ -1,5 +1,11 @@
-import shopping_service.pb as PB;
+import server.pb as PB;
 
-public table <PB:Product> key(name) products = table [
-    {name: "", description: "", price: 0.0, stock_quantity: 0, status: '', sku: ""}
-];git 
+public table<PB:Product> key(sku) addProduct = table [
+    {name: "",description: "",price: 0.0,stock_quantity: 0, sku: ""}
+
+];
+
+public table<PB:Product> key(sku) addToCart = table [
+
+
+];

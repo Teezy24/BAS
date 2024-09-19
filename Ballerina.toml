@@ -1,6 +1,6 @@
 [package]
 org = "benja"
-name = "shopping_service"
+name = "server"
 version = "0.1.0"
 distribution = "2201.9.2"
 
