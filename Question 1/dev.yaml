@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: Programme Development API
+  version: 2.0.0
+  description: Manage Programmes at Namibia University of Science and Technology
+
+servers:
+  - url: http://localhost:9000/Programs
+
+paths:
+  /programmes:
+    get:
+      summary: Retrieve all programmes
+      operationId: getAllProgrammes
+      description: Get a list of all programmes within the Programme Development Unit
+      responses:
+        '200':
+          description: All programmes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Programme'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    
+    post:
+      summary: Add a new programme
+      operationId: addProgramme
+      description: Add a new programme to the Programme Development Unit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Programme'
+      responses:
+        '201':
+          description: Programme added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /programmes/{programmeCode}:
+    get:
+      summary: Retrieve a specific programme
+      operationId: getProgramme
+      description: Retrieve the details of a specific programme by its programme code
+      parameters:
+        - in: path
+          name: programmeCode
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Programme details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    
+    patch:
+      summary: Update a programme
+      operationId: updateProgramme
+      description: Update an existing programme's information according to the programme code
+      parameters:
+        - in: path
+          name: programmeCode
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgrammeUpdate'
+      responses:
+        '200':
+          description: Programme updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    
+    delete:
+      summary: Delete a programme
+      operationId: deleteProgramme
+      description: Delete a programme's record by its programme code
+      parameters:
+        - in: path
+          name: programmeCode
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Programme deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /programmes/review:
+    get:
+      summary: Retrieve programmes due for review
+      operationId: getProgrammesDueForReview
+      description: Retrieve all programmes that are due for review (5 years after registration)
+      responses:
+        '200':
+          description: Programmes due for review retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Programme'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /programmes/faculty/{faculty}:
+    get:
+      summary: Retrieve programmes by faculty
+      operationId: getProgrammesByFaculty
+      description: Retrieve all programmes that belong to the specified faculty
+      parameters:
+        - in: path
+          name: faculty
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Programmes for the specified faculty retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Programme'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  schemas:
+    Programme:
+      type: object
+      required:
+        - programmeCode
+        - nqfLevel
+        - faculty
+        - department
+        - qualificationTitle
+        - registrationDate
+        - courses
+      properties:
+        programmeCode:
+          type: string
+          description: Unique identifier for the programme
+        nqfLevel:
+          type: integer
+          description: NQF Level of Qualification
+        faculty:
+          type: string
+          description: Faculty name
+        department:
+          type: string
+          description: Department name
+        qualificationTitle:
+          type: string
+          description: Programme/Qualification Title
+        registrationDate:
+          type: string
+          format: date
+          description: Date of programme registration
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+          description: List of courses within the programme
+
+    ProgrammeUpdate:
+      type: object
+      properties:
+        nqfLevel:
+          type: integer
+          description: NQF Level of Qualification
+        faculty:
+          type: string
+          description: Faculty name
+        department:
+          type: string
+          description: Department name
+        qualificationTitle:
+          type: string
+          description: Programme/Qualification Title
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+          description: List of courses within the programme
+
+    Course:
+      type: object
+      required:
+        - courseName
+        - courseCode
+        - nqfLevel
+      properties:
+        courseName:
+          type: string
+          description: Name of the course
+        courseCode:
+          type: string
+          description: Unique code for the course
+        nqfLevel:
+          type: integer
+          description: NQF level of the course
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message
+
+  responses:
+    ErrorResponse:
+      description: An error occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
