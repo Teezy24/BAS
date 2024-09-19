@@ -8,83 +8,88 @@ servers:
   - url: http://localhost:9000/Programs
 
 paths:
-  /Faculty:
+  /faculties:
+    get:
+      summary: Fetch all faculties
+      operationId: getFaculties
+      description: get list of faculties
+      responses:
+        '200':
+          description: All faculties retrieved successfully
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref:  '#/components/schemas/Faculty'
+
+        default:
+          $ref: '#/components/responses/ErrorMessage'
     post:
-      summary: Create a new student
-      operationId: createStudent
-      description: Create a new student and add them to the collection of students
+      summary: Add new Faculty
+      operationId: addFacutly
+      description: Add new Faculty
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Student'
+              $ref: '#/components/schemas/Faculty'
       responses:
         '201':
-          description: Student created successfully
+          description: Faculty added successfully
           content:
             application/json:
               schema:
                 properties:
-                  studentid:
-                    type: integer
-                    description: the student number of the newly created student
+                  facultyid:
+                    type: string
+                    description: ID of the new Daculty
+    
         default:
-          $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/ErrorMessage'
+
+
+  /programs:
     get:
-      summary: Fetch all students
-      operationId: getAllStudents
-      description: Get a list of all the students
+      summary: Fetch all programs
+      operationId: getPrograms
+      description: Get a list of programs
       responses:
         '200':
-          description: All students Retrieved
+          description: All programs retrieved 
           content:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Student'
+                items: 
+                  $ref: '#/components/schemas/Program'
+
         default:
           $ref: '#/components/responses/ErrorMessage'
-
-
-  /students/{studentNumber}:
-    parameters:
-      - in: path
-        name: studentNumber
-        required: true
-        schema:
-          type: integer
-    get:
-      summary: Lookup a Single Student
-      operationId: lookupStudent
-      description: Find a single student by their student number
-      responses:
-        '200':
-          description: Student Retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Student'
-        default:
-          $ref: '#/components/responses/ErrorMessage'
-    put:
-      summary: Update Student Details
-      operationId: updateStudentDetails
-      description: Update the details of a student
+    post:
+      summary: Add a new program
+      operationId: addProgram
+      description: Add program to the list of programs
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Student'
+              $ref: '#/components/schemas/Program'
       responses:
-        '200':
-          description: Student updated successfully
+        '201':
+          description: Program added successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Student'
+                properties:
+                  programid:
+                    type: string
+                    description: ID of the new Program
+
         default:
           $ref: '#/components/schemas/ErrorMessage'
+
+# ignore the delete until its $ref so that we can then add that funtion later 
     delete:
       summary: Delete a student
       operationId: deleteStudent
@@ -95,41 +100,70 @@ paths:
         default:
           $ref: '#/components/schemas/ErrorMessage'
 
-
-  /students/{studentNumber}/course/{courseCode}:
-    parameters:
-      - in: path
-        name: studentNumber
-        required: true
-        schema:
-          type: integer
-      - in: path
-        name: courseCode
-        required: true
-        schema:
-          type: string
-    put:
-      summary: Update a Student's Course Details
-      operationId: updateStudentCourseDetails
-      description: Update the course details of a student
+  /courses:
+    get:
+      summary: Get all courses
+      operationId: getCourses
+      description: Get a list of courses
+      responses:
+        '200':
+          description: All courses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        default:
+          $ref: '#/components/responses/ErrorMessage'
+    post:
+      summary: Add a new course
+      operationId: addCourse
+      description: Add a course to the list of courses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Assessment'
+              $ref: '#/components/schemas/Course'
       responses:
         '201':
-          description: Student updated successfully
+          description: Course added successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Assessment'
+                properties:
+                  course_code:
+                    type: string
+                    description: the code of the newly created course
         default:
-          $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/ErrorMessage'
 
+#THIS IS WHERE YOU START. THIS COMPONENTS SECTION IS SELF EXPLANITORY-
+#AFTER FINISHING WITH THE COMPONENTS PLEASE COPY AND PASTE THIS CODE
+
+#AND ADD THE BULLET POINTS THAT WE MUST DO THAT ARE IN QUESTION ONE- 
+#WITH ALL THOSE FUNCTIONS THEY SAID WE SHOULD DO AND THEN TELL ME WHAT-
+#WE SHOULD ADD THEN WHEN WE ARE FINISHED WE JOIN QUESTION 2.
+#DELETE COMMENTS FROM LINE 141-147 WHEN YOU ARE FINISHED
 
 components:
   schemas:
+    Programme:
+      type: object
+      required:
+        - programmeCode
+      properties:
+        programmeCode:
+          type: string
+          description: the programme code of the programme
+          readOnly: true
+        programmeName:
+          type: string
+          description: the name of the programme
+        faculty:
+          type: string
+          description: the faculty of the programme
+
     Student:
       type: object
       required:
@@ -148,7 +182,7 @@ components:
         emailaddress:
           type: string
           description: the email address of the student
-        
+
     Course:
       type: object
       properties:
@@ -165,36 +199,11 @@ components:
       properties:
         studentNumber:
           type: string
-          description: the identifier of the student
+          description: the identifier of the student by student number
         courseCode:
           type: string
-          description: the identifier of the course
-      
-    Assessment:
-      type: object
-      properties:
-        assessmentCode:
-          type: string
-          description: one of the identifiers of the assessment
-          readOnly: true
-        assessmentName:
-          type: string
-          description: the name of the assessment
-        courseCode:
-          type: string
-          description: one of the identifiers of the course
-          readOnly: true
-        weight:
-          type: number
-          description: the weight of the assessment
-        student:
-          type: integer
-          description: the student's student number
-        mark:
-          type: number
-          description: the mark of the student
-          
-      
+          description: the identifier of the course by course code
+
     Error:
       type: object
       properties:
@@ -202,17 +211,138 @@ components:
           type: string
           enum:
             - BadRequest
-
             - Not Found
-
             - InternelServerError
         message:
           type: string
 
-  responses:
-    ErrorMessage:
-      description: Exception handling of students and courses
-      content:
-        application/json:
-          schema:
-            $ref: '#/compenents/schemas/Error'
+  paths:
+    /programmes:
+      post:
+        summary: Add a new programme
+        description: Add a new programme to the Programme
+        requestBody:
+          description: Programme details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        responses:
+          201:
+            description: Programme created successfully
+          400:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes:
+      get:
+        summary: Retrieve a list of all programmes
+        description: Retrieve a list of all programmes within the Programme Development Unit
+        responses:
+          200:
+            description: List of programmes
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      patch:
+        summary: Update an existing programme's information
+        description: Update an existing programme's information according to the programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        requestBody:
+          description: Programme details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Programme'
+        responses:
+          200:
+            description: Programme updated successfully
+          400:
+            $ref: '#/components/responses/ErrorMessage'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      get:
+        summary: Retrieve the details of a specific programme
+        description: Retrieve the details of a specific programme by their programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: Programme details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/{programmeCode}:
+      delete:
+        summary: Delete a programme's record
+        description: Delete a programme's record by their programme code
+        parameters:
+          - in: path
+            name: programmeCode
+            required: true
+            schema:
+              type: string
+        responses:
+          204:
+            description: Programme deleted successfully
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/review:
+      get:
+        summary: Retrieve all programmes due for review
+        description: Retrieve all programmes that are due for review
+        responses:
+          200:
+            description: List of programmes due for review
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
+
+    /programmes/faculty/{faculty}:
+      get:
+        summary: Retrieve all programmes belonging to the same faculty
+        description: Retrieve all programmes that belong to the same faculty
+        parameters:
+          - in: path
+            name: faculty
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: List of programmes belonging to the same faculty
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Programme'
+          404:
+            $ref: '#/components/responses/ErrorMessage'
