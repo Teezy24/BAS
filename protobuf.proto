@@ -3,13 +3,10 @@ syntax = "proto3";
 package shopping;
 
 service ShoppingService {
-  // Admin operations
   rpc addProduct(AddProductRequest) returns (AddProductResponse) {}
   rpc createUsers(stream CreateUserRequest) returns (CreateUsersResponse) {}
   rpc updateProduct(UpdateProductRequest) returns (UpdateProductResponse) {}
   rpc removeProduct(RemoveProductRequest) returns (RemoveProductResponse) {}
-
-  // Customer operations
   rpc listAvailableProducts(ListAvailableProductsRequest) returns (ListAvailableProductsResponse) {}
   rpc searchProduct(SearchProductRequest) returns (SearchProductResponse) {}
   rpc addToCart(AddToCartRequest) returns (AddToCartResponse) {}
@@ -24,10 +21,10 @@ message Product {
   int32 stock_quantity = 4;
   string sku = 5;
   ProductStatus status = 6;
-  enum ProductStatus {
-    AVAILABLE = 0;
-    OUT_OF_STOCK = 1;
-  }
+}
+enum ProductStatus {
+  AVAILABLE = 0;
+  OUT_OF_STOCK = 1;
 }
 
 message AddProductRequest {
@@ -35,20 +32,22 @@ message AddProductRequest {
 }
 
 message AddProductResponse {
-  string product_code = 1;
+  string product_id = 1;
 }
 
 message CreateUserRequest {
   string username = 1;
   string password = 2;
   UserType user_type = 3;
-  enum UserType {
-    CUSTOMER = 0;
-    ADMIN = 1;
-  }
+}
+enum UserType {
+  CUSTOMER = 0;
+  ADMIN = 1;
 }
 
-message CreateUsersResponse {}
+message CreateUsersResponse {
+  string message = 1;
+}
 
 message UpdateProductRequest {
   Product product = 1;
@@ -64,7 +63,9 @@ message RemoveProductResponse {
   repeated Product products = 1;
 }
 
-message ListAvailableProductsRequest {}
+message ListAvailableProductsRequest {
+  string message = 1;
+}
 
 message ListAvailableProductsResponse {
   repeated Product products = 1;
@@ -83,11 +84,15 @@ message AddToCartRequest {
   string sku = 2;
 }
 
-message AddToCartResponse {}
+message AddToCartResponse {
+ string message = 1;
+}
 
 message PlaceOrderRequest {
   string user_id = 1;
   repeated Product products = 2;
 }
 
-message PlaceOrderResponse {}
+message PlaceOrderResponse {
+  string message = 1;
+}
