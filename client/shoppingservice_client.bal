@@ -1,6 +1,5 @@
 import ballerina/grpc;
 import ballerina/io;
-import ballerina/protobuf;
 
 ShoppingServiceClient ep = check new ("http://localhost:9090");
 
@@ -73,6 +72,7 @@ public function main() returns error? {
                             description: description,
                             status: "AVAILABLE"
                         }
+                    };
                     UpdateProductResponse updateProductResponse = check ep->updateProduct(updateProductRequest);
 
                     io:println(UpdateProductResponse);
@@ -101,14 +101,16 @@ public function main() returns error? {
                 // list_available_product
                 var product_id = io:readln("Enter Product ID:");
                 ListAvailableProductsRequest listAvailableProductsRequest = {};
-                ListAvailableProductsResponse listAvailableProductsResponse = check ep->listAvailableProducts(listAvailableProductsRequest);
-                if listAvailableProductsResponse !is grpc:Error {
-                foreach var item in listAvailableProductsResponse.products { 
-                    io:println(item);
-                }
+                ListAvailableProductsResponse|grpc:Error listAvailableProductsResponse = ep->listAvailableProducts(listAvailableProductsRequest);
+                if listAvailableProductsResponse is ListAvailableProductsResponse {
+                    foreach var item in listAvailableProductsResponse.products { 
+                        io:println(item);
+                    }
+                } else {
+                    io:println("Error: " + listAvailableProductsResponse.message());
                 }
                 continue;
-            }
+             }
 
             "5" => {
                 var product_id = io:readln("Enter Product ID: ");
@@ -133,13 +135,12 @@ public function main() returns error? {
 
             "7" => {
                 // place_order
-                 PlaceOrderRequest placeOrderRequest = {user_id: " ", products: [{name:" " , description: "Product Description ", price: 10.0, stock_quantity: 5, sku: " ", status: "AVAILABLE"}]};
-                 PlaceOrderResponse placeOrderResponse = check ep->placeOrder(placeOrderRequest);
-                 io:println(placeOrderResponse);
-
-                }
+                PlaceOrderRequest placeOrderRequest = {user_id: " ", products: [{name:" " , description: "Product Description ", price: 10.0, stock_quantity: 5, sku: " ", status: "AVAILABLE"}]};
+                PlaceOrderResponse placeOrderResponse = check ep->placeOrder(placeOrderRequest);
+                io:println(placeOrderResponse);
                 continue;
             }
+        
 
             "8" => {
                 // create_users
@@ -147,19 +148,20 @@ public function main() returns error? {
                     username: "",
                     password: "",
                     user_type: CUSTOMER
-                    user_type: ADMIN
                 };
-            }
-        }
-        CreateUserRequest createUsersRequest = {username: " ", password: " ", user_type: "CUSTOMER",  user_type:"ADMIN"};
-        CreateUsersStreamingClient createUsersStreamingClient = check ep->createUsers();
+            
+       CreateUsersStreamingClient createUsersStreamingClient = check ep->createUsers();
         check createUsersStreamingClient->sendCreateUserRequest(createUsersRequest);
         check createUsersStreamingClient->complete();
         CreateUsersResponse? createUsersResponse = check createUsersStreamingClient->receiveCreateUsersResponse();
         io:println(createUsersResponse);
         continue;
-
+        }
+    }   
         continueworking = io:readln("Would you like to continue shopping? (y/n)");
+        
+            
+
     }
 }
 

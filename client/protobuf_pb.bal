@@ -423,6 +423,12 @@ public type CreateUserRequest record {|
     UserType user_type = CUSTOMER;
 |};
 
+
+public enum UserType {
+    CUSTOMER, ADMIN
+}
+
+
 @protobuf:Descriptor {value: PROTOBUF_DESC}
 public type SearchProductResponse record {|
     Product product = {};
@@ -441,7 +447,4 @@ public enum ProductStatus {
     AVAILABLE, OUT_OF_STOCK
 }
 
-public enum UserType {
-    CUSTOMER, ADMIN
-}
 
