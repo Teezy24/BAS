@@ -1,0 +1,42 @@
+[
+    {
+      "programmeCode": "CS002",
+      "programmeName": "Data Science",
+      "nqfLevel": 8,
+      "faculty": "Computing and Informatics",
+      "department": "Data Science",
+      "qualificationTitle": "Bachelor of Science in Data Science",
+      "courses": [
+        {
+          "courseCode": "DS101",
+          "courseName": "Introduction to Data Science",
+          "nqfLevel": 5
+        },
+        {
+          "courseCode": "DS102",
+          "courseName": "Statistical Methods for Data Science",
+          "nqfLevel": 5
+        }
+      ]
+    },
+    {
+      "programmeCode": "BUS002",
+      "programmeName": "Digital Marketing",
+      "nqfLevel": 7,
+      "faculty": "Management Sciences",
+      "department": "Marketing",
+      "qualificationTitle": "Bachelor of Business Administration in Digital Marketing",
+      "courses": [
+        {
+          "courseCode": "DM101",
+          "courseName": "Fundamentals of Digital Marketing",
+          "nqfLevel": 5
+        },
+        {
+          "courseCode": "DM102",
+          "courseName": "Social Media Strategy",
+          "nqfLevel": 5
+        }
+      ]
+    }
+  ]
