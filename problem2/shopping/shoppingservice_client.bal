@@ -1,4 +1,6 @@
 import ballerina/io;
+import ballerina/grpc;
+
 
 ShoppingServiceClient ep = check new ("http://localhost:9090");
 
