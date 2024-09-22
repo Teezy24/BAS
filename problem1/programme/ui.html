@@ -14,6 +14,9 @@
         <button onclick="showAllProgrammes()">View All Programmes</button>
         <button onclick="showFacultySearch()">Search by Faculty</button>
         <button onclick="showProgrammesForReview()">Programmes for Review</button>
+        <button onclick="updateProgramme()">Update Programme</button>
+        <button onclick="getProgrammeDetails()">Get Programme Details</button>
+        <button onclick="deleteProgramme()">Delete Programme</button>
     </div>
 
     <div id="addProgramme" style="display:none;">
@@ -36,10 +39,9 @@
 
             <label for="qualificationTitle">Qualification Title:</label>
             <input type="text" id="qualificationTitle" required><br><br>
-            
+
             <label for="registrationDate">Registration Date:</label>
             <input type="text" id="registrationDate" required><br><br>
-            
 
             <h3>Courses</h3>
             <div id="courses">
@@ -78,37 +80,146 @@
         <ul id="reviewList"></ul>
     </div>
 
+    <div id="updateProgramme" style="display:none;">
+        <h2>Update Programme</h2>
+        <label for="programmeCodeUpdate">Programme Code:</label>
+        <input type="text" id="programmeCodeUpdate" required><br><br>
+
+        <label for="programmeNameUpdate">Programme Name:</label>
+        <input type="text" id="programmeNameUpdate" required><br><br>
+
+        <label for="nqfLevelUpdate">NQF Level:</label>
+        <input type="number" id="nqfLevelUpdate" required><br><br>
+
+        <label for="facultyUpdate">Faculty:</label>
+        <input type="text" id="facultyUpdate" required><br><br>
+
+        <label for="departmentUpdate">Department:</label>
+        <input type="text" id="departmentUpdate" required><br><br>
+
+        <label for="qualificationTitleUpdate">Qualification Title:</label>
+        <input type="text" id="qualificationTitleUpdate" required><br><br>
+
+        <label for="registrationDateUpdate">Registration Date:</label>
+        <input type="text" id="registrationDateUpdate" required><br><br>
+
+        <h3>Courses</h3>
+        <div id="coursesUpdate">
+            <div class="course">
+                <label for="courseCodeUpdate">Course Code:</label>
+                <input type="text" class="courseCodeUpdate" required><br>
+
+                <label for="courseNameUpdate">Course Name:</label>
+                <input type="text" class="courseNameUpdate" required><br>
+
+                <label for="courseNqfLevelUpdate">Course NQF Level:</label>
+                <input type="number" class="courseNqfLevelUpdate" required><br><br>
+            </div>
+        </div>
+
+        <button type="button" id="addCourseBtnUpdate">Add Another Course</button><br><br>
+
+        <input type="submit" value="Update Programme">
+    </div>
+
+    <div id="getProgrammeDetails" style="display:none;">
+        <h2>Get Programme Details</h2>
+        <label for="programmeCodeDetails">Programme Code:</label>
+        <input type="text" id="programmeCodeDetails" required><br><br>
+
+        <button onclick="getProgrammeDetailsByCode()">Get Details</button>
+        <div id="programmeDetails"></div>
+    </div>
+
+    <div id="deleteProgramme" style="display:none;">
+        <h2>Delete Programme</h2>
+        <label for="programmeCodeDelete">Programme Code:</label>
+        <input type="text" id="programmeCodeDelete" required><br><br>
+
+        <button onclick="deleteProgrammeByCode()">Delete Programme</button>
+    </div>
+
     <script>
-    function showAddProgramme() {
-        document.getElementById('addProgramme').style.display = 'block';
+        // Add programme functionality
+        function showAddProgramme() {
+            document.getElementById('addProgramme').style.display = 'block';
+            document.getElementById('allProgrammes').style.display = 'none';
+            document.getElementById('facultySearch').style.display = 'none';
+            document.getElementById('programmesForReview').style.display = 'none';
+            document.getElementById('updateProgramme').style.display = 'none';
+            document.getElementById('getProgrammeDetails').style.display = 'none';
+            document.getElementById('deleteProgramme').style.display = 'none';
+        }
+
+        // Retrieve all programmes functionality
+        function showAllProgrammes() {
+            document.getElementById('addProgramme').style.display = 'none';
+            document.getElementById('allProgrammes').style.display = 'block';
+            document.getElementById('facultySearch').style.display = 'none';
+            document.getElementById('programmesForReview').style.display = 'none';
+            document.getElementById('updateProgramme').style.display = 'none';
+            document.getElementById('getProgrammeDetails').style.display = 'none';
+            document.getElementById('deleteProgramme').style.display = 'none';
+            fetchAllProgrammes();
+        }
+
+        // Search by faculty functionality
+        function showFacultySearch() {
+            document.getElementById('addProgramme').style.display = 'none';
+            document.getElementById('allProgrammes').style.display = 'none';
+            document.getElementById('facultySearch').style.display = 'block';
+            document.getElementById('programmesForReview').style.display = 'none';
+            document.getElementById('updateProgramme').style.display = 'none';
+            document.getElementById('getProgrammeDetails').style.display = 'none';
+            document.getElementById('deleteProgramme').style.display = 'none';
+        }
+
+        // Retrieve programmes for review functionality
+        function showProgrammesForReview() {
+            document.getElementById('addProgramme').style.display = 'none';
+            document.getElementById('allProgrammes').style.display = 'none';
+            document.getElementById('facultySearch').style.display = 'none';
+            document.getElementById('programmesForReview').style.display = 'block';
+            document.getElementById('updateProgramme').style.display = 'none';
+            document.getElementById('getProgrammeDetails').style.display = 'none';
+            document.getElementById('deleteProgramme').style.display = 'none';
+            fetchProgrammesForReview();
+        }
+
+        // Update programme functionality
+        function updateProgramme() {
+            document.getElementById('addProgramme').style.display = 'none';
+            document.getElementById('allProgrammes').style.display = 'none';
+            document.getElementById('facultySearch').style.display = 'none';
+            document.getElementById('programmesForReview').style.display = 'none';
+            document.getElementById('updateProgramme').style.display = 'block';
+            document.getElementById('getProgrammeDetails').style.display = 'none';
+            document.getElementById('deleteProgramme').style.display = 'none';
+        }
+
+        // Get programme details functionality
+        function getProgrammeDetails(){
+            document.getElementById('addProgramme').style.display = 'none';
         document.getElementById('allProgrammes').style.display = 'none';
         document.getElementById('facultySearch').style.display = 'none';
         document.getElementById('programmesForReview').style.display = 'none';
+        document.getElementById('updateProgramme').style.display = 'none';
+        document.getElementById('getProgrammeDetails').style.display = 'block';
+        document.getElementById('deleteProgramme').style.display = 'none';
     }
 
-    function showAllProgrammes() {
-        document.getElementById('addProgramme').style.display = 'none';
-        document.getElementById('allProgrammes').style.display = 'block';
-        document.getElementById('facultySearch').style.display = 'none';
-        document.getElementById('programmesForReview').style.display = 'none';
-        fetchAllProgrammes();
-    }
-
-    function showFacultySearch() {
-        document.getElementById('addProgramme').style.display = 'none';
-        document.getElementById('allProgrammes').style.display = 'none';
-        document.getElementById('facultySearch').style.display = 'block';
-        document.getElementById('programmesForReview').style.display = 'none';
-    }
-
-    function showProgrammesForReview() {
+    // Delete programme functionality
+    function deleteProgramme() {
         document.getElementById('addProgramme').style.display = 'none';
         document.getElementById('allProgrammes').style.display = 'none';
         document.getElementById('facultySearch').style.display = 'none';
-        document.getElementById('programmesForReview').style.display = 'block';
-        fetchProgrammesForReview();
+        document.getElementById('programmesForReview').style.display = 'none';
+        document.getElementById('updateProgramme').style.display = 'none';
+        document.getElementById('getProgrammeDetails').style.display = 'none';
+        document.getElementById('deleteProgramme').style.display = 'block';
     }
 
+    // Fetch all programmes
     function fetchAllProgrammes() {
         fetch('http://localhost:9000/programmes')
             .then(response => response.json())
@@ -124,6 +235,7 @@
             .catch(error => console.error('Error:', error));
     }
 
+    // Search by faculty
     function searchByFaculty() {
         const faculty = document.getElementById('facultySearchInput').value;
         fetch(`http://localhost:9000/programmes/faculty/${faculty}`)
@@ -140,6 +252,7 @@
             .catch(error => console.error('Error:', error));
     }
 
+    // Fetch programmes for review
     function fetchProgrammesForReview() {
         fetch('http://localhost:9000/programmes/review')
             .then(response => response.json())
@@ -155,6 +268,38 @@
             .catch(error => console.error('Error:', error));
     }
 
+    // Get programme details by code
+    function getProgrammeDetailsByCode() {
+        const programmeCode = document.getElementById('programmeCodeDetails').value;
+        fetch(`http://localhost:9000/programmes/${programmeCode}`)
+            .then(response => response.json())
+            .then(data => {
+                const programmeDetails = document.getElementById('programmeDetails');
+                programmeDetails.innerHTML = '';
+                programmeDetails.textContent = `Programme Code: ${data.programmeCode}
+Programme Name: ${data.programmeName}
+NQF Level: ${data.nqfLevel}
+Faculty: ${data.faculty}
+Department: ${data.department}
+Qualification Title: ${data.qualificationTitle}
+Registration Date: ${data.registrationDate}`;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Delete programme by code
+    function deleteProgrammeByCode() {
+        const programmeCode = document.getElementById('programmeCodeDelete').value;
+        fetch(`http://localhost:9000/programmes/${programmeCode}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Programme ${programmeCode} deleted successfully!`);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('programmeForm');
         const addCourseBtn = document.getElementById('addCourseBtn');
