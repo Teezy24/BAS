@@ -19,7 +19,7 @@ configurable string collection = "programmes";
 // Creating the mongodb client instance
 mongodb:Client mongo = check new (mongoConfig);
 
-service /programmes on new http:Listener(9000) {
+service /programmes on new http:Listener(9001) {
     private final mongodb:Database educationDb;
 
     function init() returns error? {
@@ -41,6 +41,25 @@ service /programmes on new http:Listener(9000) {
         };
     return programmeList;
 }
+ // Updated PUT function for editing a programme
+    resource function put [string programmeCode](@http:Payload ProgrammeUpdate update) returns Programme|error {
+        mongodb:Collection programmes = check self.educationDb->getCollection(collection);
+        mongodb:UpdateResult updateResult = check programmes->updateOne({programmeCode: programmeCode}, {set: update});
+        if updateResult.modifiedCount != 1 {
+            return error(string `Failed to update the programme with code ${programmeCode}`);
+        }
+        return check getProgramme(self.educationDb, programmeCode);
+    }
+
+    // Updated DELETE function for deleting a programme
+    resource function delete [string programmeCode]() returns http:Ok|error {
+        mongodb:Collection programmes = check self.educationDb->getCollection(collection);
+        mongodb:DeleteResult deleteResult = check programmes->deleteOne({programmeCode: programmeCode});
+        if deleteResult.deletedCount != 1 {
+            return error(string `Failed to delete the programme ${programmeCode}`);
+        }
+        return http:OK;
+    }
     resource function post .(@http:Payload Programme[]? programmes) returns Programme[]|ConflictingProgrammeCodesError|error {
         log:printInfo("Received POST request with payload: " + programmes.toString());
 
@@ -97,7 +116,7 @@ service /programmes on new http:Listener(9000) {
         return programme;
     }
 
-    resource function put [string programmeCode](@http:Payload ProgrammeUpdate update) returns Programme|error {
+    resource function post [string programmeCode](@http:Payload ProgrammeUpdate update) returns Programme|error {
         mongodb:Collection programmes = check self.educationDb->getCollection(collection);
         mongodb:UpdateResult updateResult = check programmes->updateOne({programmeCode}, {set: update});
         if updateResult.modifiedCount != 1 {
@@ -106,13 +125,13 @@ service /programmes on new http:Listener(9000) {
         return check getProgramme(self.educationDb, programmeCode);
     }
 
-    resource function delete [string programmeCode]() returns string|error {
+   resource function delete deleteProgramme/[string programmeCode]() returns http:Ok|error {
         mongodb:Collection programmes = check self.educationDb->getCollection(collection);
-        mongodb:DeleteResult deleteResult = check programmes->deleteOne({programmeCode});
+        mongodb:DeleteResult deleteResult = check programmes->deleteOne({programmeCode: programmeCode});
         if deleteResult.deletedCount != 1 {
             return error(string `Failed to delete the programme ${programmeCode}`);
         }
-        return programmeCode;
+        return http:OK;
     }
 
 

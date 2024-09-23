@@ -40,7 +40,10 @@
             <label for="registrationDate">Registration Date:</label>
             <input type="text" id="registrationDate" required><br><br>
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> Marleny
             <h3>Courses</h3>
             <div id="courses">
                 <div class="course">
@@ -78,12 +81,45 @@
         <ul id="reviewList"></ul>
     </div>
 
+<<<<<<< HEAD
+=======
+    <div id="editProgramme" style="display:none;">
+        <h2>Edit Programme</h2>
+        <form id="editProgrammeForm">
+            <input type="hidden" id="editProgrammeCode">
+            <label for="editProgrammeName">Programme Name:</label>
+            <input type="text" id="editProgrammeName" required><br><br>
+
+            <label for="editNqfLevel">NQF Level:</label>
+            <input type="number" id="editNqfLevel" required><br><br>
+
+            <label for="editFaculty">Faculty:</label>
+            <input type="text" id="editFaculty" required><br><br>
+
+            <label for="editDepartment">Department:</label>
+            <input type="text" id="editDepartment" required><br><br>
+
+            <label for="editQualificationTitle">Qualification Title:</label>
+            <input type="text" id="editQualificationTitle" required><br><br>
+            
+            <label for="editRegistrationDate">Registration Date:</label>
+            <input type="text" id="editRegistrationDate" required><br><br>
+
+            <input type="submit" value="Update Programme">
+        </form>
+    </div>
+
+>>>>>>> Marleny
     <script>
     function showAddProgramme() {
         document.getElementById('addProgramme').style.display = 'block';
         document.getElementById('allProgrammes').style.display = 'none';
         document.getElementById('facultySearch').style.display = 'none';
         document.getElementById('programmesForReview').style.display = 'none';
+<<<<<<< HEAD
+=======
+        document.getElementById('editProgramme').style.display = 'none';
+>>>>>>> Marleny
     }
 
     function showAllProgrammes() {
@@ -91,6 +127,10 @@
         document.getElementById('allProgrammes').style.display = 'block';
         document.getElementById('facultySearch').style.display = 'none';
         document.getElementById('programmesForReview').style.display = 'none';
+<<<<<<< HEAD
+=======
+        document.getElementById('editProgramme').style.display = 'none';
+>>>>>>> Marleny
         fetchAllProgrammes();
     }
 
@@ -99,6 +139,10 @@
         document.getElementById('allProgrammes').style.display = 'none';
         document.getElementById('facultySearch').style.display = 'block';
         document.getElementById('programmesForReview').style.display = 'none';
+<<<<<<< HEAD
+=======
+        document.getElementById('editProgramme').style.display = 'none';
+>>>>>>> Marleny
     }
 
     function showProgrammesForReview() {
@@ -106,6 +150,10 @@
         document.getElementById('allProgrammes').style.display = 'none';
         document.getElementById('facultySearch').style.display = 'none';
         document.getElementById('programmesForReview').style.display = 'block';
+<<<<<<< HEAD
+=======
+        document.getElementById('editProgramme').style.display = 'none';
+>>>>>>> Marleny
         fetchProgrammesForReview();
     }
 
@@ -117,7 +165,13 @@
                 list.innerHTML = '';
                 data.forEach(programme => {
                     const li = document.createElement('li');
+<<<<<<< HEAD
                     li.textContent = `${programme.programmeCode}: ${programme.programmeName}`;
+=======
+                    li.innerHTML = `${programme.programmeCode}: ${programme.programmeName} 
+                        <button onclick="editProgramme('${programme.programmeCode}')">Edit</button>
+                        <button onclick="deleteProgramme('${programme.programmeCode}')">Delete</button>`;
+>>>>>>> Marleny
                     list.appendChild(li);
                 });
             })
@@ -155,6 +209,47 @@
             .catch(error => console.error('Error:', error));
     }
 
+<<<<<<< HEAD
+=======
+    function editProgramme(programmeCode) {
+        fetch(`http://localhost:9000/programmes/${programmeCode}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('editProgrammeCode').value = data.programmeCode;
+                document.getElementById('editProgrammeName').value = data.programmeName;
+                document.getElementById('editNqfLevel').value = data.nqfLevel;
+                document.getElementById('editFaculty').value = data.faculty;
+                document.getElementById('editDepartment').value = data.department;
+                document.getElementById('editQualificationTitle').value = data.qualificationTitle;
+                document.getElementById('editRegistrationDate').value = data.registrationDate;
+
+                document.getElementById('editProgramme').style.display = 'block';
+                document.getElementById('allProgrammes').style.display = 'none';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function deleteProgramme(programmeCode) {
+        if (confirm(`Are you sure you want to delete programme ${programmeCode}?`)) {
+            fetch(`http://localhost:9000/programmes/deleteProgramme/${programmeCode}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Programme deleted successfully');
+                    fetchAllProgrammes();
+                } else {
+                    throw new Error('Failed to delete programme');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting programme');
+            });
+        }
+    }
+
+>>>>>>> Marleny
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('programmeForm');
         const addCourseBtn = document.getElementById('addCourseBtn');
@@ -197,6 +292,10 @@
                 .then(data => {
                     console.log('Success:', data);
                     alert('Programme added successfully!');
+<<<<<<< HEAD
+=======
+                    form.reset();
+>>>>>>> Marleny
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -220,6 +319,48 @@
         `;
             coursesDiv.appendChild(newCourse);
         });
+<<<<<<< HEAD
+=======
+
+        const editForm = document.getElementById('editProgrammeForm');
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const programmeCode = document.getElementById('editProgrammeCode').value;
+            const programmeData = {
+                programmeName: document.getElementById('editProgrammeName').value,
+                nqfLevel: parseInt(document.getElementById('editNqfLevel').value),
+                faculty: document.getElementById('editFaculty').value,
+                department: document.getElementById('editDepartment').value,
+                qualificationTitle: document.getElementById('editQualificationTitle').value,
+                registrationDate: document.getElementById('editRegistrationDate').value
+            };
+
+            fetch(`http://localhost:9000/programmes/${programmeCode}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(programmeData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Programme updated successfully!');
+                document.getElementById('editProgramme').style.display = 'none';
+                showAllProgrammes();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error updating programme. Please try again.');
+            });
+        });
+>>>>>>> Marleny
     });
     </script>
 </body>
