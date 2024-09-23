@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Programme Management</h1>
+    
+    <div id="navigation">
+        <button onclick="showAddProgramme()">Add New Programme</button>
+        <button onclick="showAllProgrammes()">View All Programmes</button>
+        <button onclick="showFacultySearch()">Search by Faculty</button>
+        <button onclick="showProgrammesForReview()">Programmes for Review</button>
+    </div>
+
+    <div id="addProgramme" style="display:none;">
+        <h2>Add New Programme</h2>
+        <form id="programmeForm">
+            <label for="programmeCode">Programme Code:</label>
+            <input type="text" id="programmeCode" required><br><br>
+
+            <label for="programmeName">Programme Name:</label>
+            <input type="text" id="programmeName" required><br><br>
+
+            <label for="nqfLevel">NQF Level:</label>
+            <input type="number" id="nqfLevel" required><br><br>
+
+            <label for="faculty">Faculty:</label>
+            <input type="text" id="faculty" required><br><br>
+
+            <label for="department">Department:</label>
+            <input type="text" id="department" required><br><br>
+
+            <label for="qualificationTitle">Qualification Title:</label>
+            <input type="text" id="qualificationTitle" required><br><br>
+            
+            <label for="registrationDate">Registration Date:</label>
+            <input type="text" id="registrationDate" required><br><br>
+            
+            <h3>Courses</h3>
+            <div id="courses">
+                <div class="course">
+                    <label for="courseCode">Course Code:</label>
+                    <input type="text" class="courseCode" required><br>
+
+                    <label for="courseName">Course Name:</label>
+                    <input type="text" class="courseName" required><br>
+
+                    <label for="courseNqfLevel">Course NQF Level:</label>
+                    <input type="number" class="courseNqfLevel" required><br><br>
+                </div>
+            </div>
+
+            <button type="button" id="addCourseBtn">Add Another Course</button><br><br>
+
+            <input type="submit" value="Submit Programme">
+        </form>
+    </div>
+
+    <div id="allProgrammes" style="display:none;">
+        <h2>All Programmes</h2>
+        <ul id="programmeList"></ul>
+    </div>
+
+    <div id="facultySearch" style="display:none;">
+        <h2>Search by Faculty</h2>
+        <input type="text" id="facultySearchInput" placeholder="Enter faculty name">
+        <button onclick="searchByFaculty()">Search</button>
+        <ul id="facultySearchResults"></ul>
+    </div>
+
+    <div id="programmesForReview" style="display:none;">
+        <h2>Programmes for Review</h2>
+        <ul id="reviewList"></ul>
+    </div>
+
+    <div id="editProgramme" style="display:none;">
+        <h2>Edit Programme</h2>
+        <form id="editProgrammeForm">
+            <input type="hidden" id="editProgrammeCode">
+            <label for="editProgrammeName">Programme Name:</label>
+            <input type="text" id="editProgrammeName" required><br><br>
+
+            <label for="editNqfLevel">NQF Level:</label>
+            <input type="number" id="editNqfLevel" required><br><br>
+
+            <label for="editFaculty">Faculty:</label>
+            <input type="text" id="editFaculty" required><br><br>
+
+            <label for="editDepartment">Department:</label>
+            <input type="text" id="editDepartment" required><br><br>
+
+            <label for="editQualificationTitle">Qualification Title:</label>
+            <input type="text" id="editQualificationTitle" required><br><br>
+            
+            <label for="editRegistrationDate">Registration Date:</label>
+            <input type="text" id="editRegistrationDate" required><br><br>
+
+            <input type="submit" value="Update Programme">
+        </form>
+    </div>
+
+    <script>
+    function showAddProgramme() {
+        document.getElementById('addProgramme').style.display = 'block';
+        document.getElementById('allProgrammes').style.display = 'none';
+        document.getElementById('facultySearch').style.display = 'none';
+        document.getElementById('programmesForReview').style.display = 'none';
+        document.getElementById('editProgramme').style.display = 'none';
+    }
+
+    function showAllProgrammes() {
+        document.getElementById('addProgramme').style.display = 'none';
+        document.getElementById('allProgrammes').style.display = 'block';
+        document.getElementById('facultySearch').style.display = 'none';
+        document.getElementById('programmesForReview').style.display = 'none';
+        document.getElementById('editProgramme').style.display = 'none';
+        fetchAllProgrammes();
+    }
+
+    function showFacultySearch() {
+        document.getElementById('addProgramme').style.display = 'none';
+        document.getElementById('allProgrammes').style.display = 'none';
+        document.getElementById('facultySearch').style.display = 'block';
+        document.getElementById('programmesForReview').style.display = 'none';
+        document.getElementById('editProgramme').style.display = 'none';
+    }
+
+    function showProgrammesForReview() {
+        document.getElementById('addProgramme').style.display = 'none';
+        document.getElementById('allProgrammes').style.display = 'none';
+        document.getElementById('facultySearch').style.display = 'none';
+        document.getElementById('programmesForReview').style.display = 'block';
+        document.getElementById('editProgramme').style.display = 'none';
+        fetchProgrammesForReview();
+    }
+
+    function fetchAllProgrammes() {
+        fetch('http://localhost:9000/programmes')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('programmeList');
+                list.innerHTML = '';
+                data.forEach(programme => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${programme.programmeCode}: ${programme.programmeName} 
+                        <button onclick="editProgramme('${programme.programmeCode}')">Edit</button>
+                        <button onclick="deleteProgramme('${programme.programmeCode}')">Delete</button>`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function searchByFaculty() {
+        const faculty = document.getElementById('facultySearchInput').value;
+        fetch(`http://localhost:9000/programmes/faculty/${faculty}`)
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('facultySearchResults');
+                list.innerHTML = '';
+                data.forEach(programme => {
+                    const li = document.createElement('li');
+                    li.textContent = `${programme.programmeCode}: ${programme.programmeName}`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchProgrammesForReview() {
+        fetch('http://localhost:9000/programmes/review')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('reviewList');
+                list.innerHTML = '';
+                data.forEach(programme => {
+                    const li = document.createElement('li');
+                    li.textContent = `${programme.programmeCode}: ${programme.programmeName} (Registered: ${programme.registrationDate})`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function editProgramme(programmeCode) {
+        fetch(`http://localhost:9000/programmes/${programmeCode}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('editProgrammeCode').value = data.programmeCode;
+                document.getElementById('editProgrammeName').value = data.programmeName;
+                document.getElementById('editNqfLevel').value = data.nqfLevel;
+                document.getElementById('editFaculty').value = data.faculty;
+                document.getElementById('editDepartment').value = data.department;
+                document.getElementById('editQualificationTitle').value = data.qualificationTitle;
+                document.getElementById('editRegistrationDate').value = data.registrationDate;
+
+                document.getElementById('editProgramme').style.display = 'block';
+                document.getElementById('allProgrammes').style.display = 'none';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function deleteProgramme(programmeCode) {
+        if (confirm(`Are you sure you want to delete programme ${programmeCode}?`)) {
+            fetch(`http://localhost:9000/programmes/deleteProgramme/${programmeCode}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Programme deleted successfully');
+                    fetchAllProgrammes();
+                } else {
+                    throw new Error('Failed to delete programme');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting programme');
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('programmeForm');
+        const addCourseBtn = document.getElementById('addCourseBtn');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const courses = Array.from(document.querySelectorAll('.course')).map(course => ({
+                courseCode: course.querySelector('.courseCode').value,
+                courseName: course.querySelector('.courseName').value,
+                nqfLevel: parseInt(course.querySelector('.courseNqfLevel').value)
+            }));
+
+            const programmeData = {
+                programmeCode: document.getElementById('programmeCode').value,
+                programmeName: document.getElementById('programmeName').value,
+                nqfLevel: parseInt(document.getElementById('nqfLevel').value),
+                faculty: document.getElementById('faculty').value,
+                department: document.getElementById('department').value,
+                qualificationTitle: document.getElementById('qualificationTitle').value,
+                courses: courses,
+                registrationDate: document.getElementById('registrationDate').value
+            };
+
+            console.log('Sending data:', JSON.stringify([programmeData]));
+
+            fetch('http://localhost:9000/programmes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([programmeData])
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Programme added successfully!');
+                    form.reset();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Error adding programme. Please try again.');
+                });
+        });
+
+        addCourseBtn.addEventListener('click', function () {
+            const coursesDiv = document.getElementById('courses');
+            const newCourse = document.createElement('div');
+            newCourse.className = 'course';
+            newCourse.innerHTML = `
+            <label for="courseCode">Course Code:</label>
+            <input type="text" class="courseCode" required><br>
+
+            <label for="courseName">Course Name:</label>
+            <input type="text" class="courseName" required><br>
+
+            <label for="courseNqfLevel">Course NQF Level:</label>
+            <input type="number" class="courseNqfLevel" required><br><br>
+        `;
+            coursesDiv.appendChild(newCourse);
+        });
+
+        const editForm = document.getElementById('editProgrammeForm');
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const programmeCode = document.getElementById('editProgrammeCode').value;
+            const programmeData = {
+                programmeName: document.getElementById('editProgrammeName').value,
+                nqfLevel: parseInt(document.getElementById('editNqfLevel').value),
+                faculty: document.getElementById('editFaculty').value,
+                department: document.getElementById('editDepartment').value,
+                qualificationTitle: document.getElementById('editQualificationTitle').value,
+                registrationDate: document.getElementById('editRegistrationDate').value
+            };
+
+            fetch(`http://localhost:9000/programmes/${programmeCode}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(programmeData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Programme updated successfully!');
+                document.getElementById('editProgramme').style.display = 'none';
+                showAllProgrammes();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error updating programme. Please try again.');
+            });
+        });
+    });
+    </script>
+</body>
+</html>
