@@ -96,6 +96,6 @@ public function main() returns error? {
             io:println("Account created: ", createUsersResponse);
         }
 
-        continueworking = io:readln("Do you want to continue(y/n): ");
+        continueworking = io:readln("Do you want to continue working(y/n): ");
     }
-}cd
+}
